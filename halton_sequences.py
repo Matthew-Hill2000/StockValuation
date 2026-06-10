@@ -1,14 +1,15 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def halton_sequence(index, base):
     """
     Compute the Halton sequence value for a given index and base.
-    
+
     Parameters:
     - index: The index in the Halton sequence (1-based index).
     - base: The base for the Halton sequence.
-    
+
     Returns:
     - value: The Halton sequence value for the given index and base.
     """
@@ -20,33 +21,35 @@ def halton_sequence(index, base):
         index = index // base
     return fractional_part
 
+
 def generate_halton_vectors(base_a, base_b, num_vectors):
     """
     Generate a matrix of Halton sequence values with two different bases.
-    
+
     Parameters:
     - base_a: The base for the first Halton sequence dimension.
     - base_b: The base for the second Halton sequence dimension.
     - num_vectors: The number of Halton vectors to generate.
-    
+
     Returns:
     - halton_matrix: A 2D numpy array where each row contains subsequent Halton sequence values for the specified bases.
     """
     halton_matrix = np.zeros((num_vectors, 2))
-    
+
     for i in range(num_vectors):
         halton_matrix[i, 0] = halton_sequence(i + 1, base_a)
         halton_matrix[i, 1] = halton_sequence(i + 1, base_b)
-    
+
     return halton_matrix
+
 
 def apply_box_muller_transform(halton_matrix):
     """
     Apply the Box-Muller transform to a matrix of Halton sequence values.
-    
+
     Parameters:
     - halton_matrix: A 2D numpy array where each row contains two Halton sequence values (in [0, 1)).
-    
+
     Returns:
     - normal_random_vars: A 1D numpy array containing normally distributed random variables.
     """
@@ -64,6 +67,7 @@ def apply_box_muller_transform(halton_matrix):
 
     return normal_random_vars
 
+
 def main():
     num_points = 1000
     base_a = 2
@@ -79,27 +83,34 @@ def main():
     plt.figure(figsize=(14, 6))
 
     plt.subplot(1, 2, 1)
-    plt.scatter(halton_vectors[:, 0], halton_vectors[:, 1], alpha=0.5, edgecolor='k')
-    plt.title('Halton Sequence Points')
-    plt.xlabel('Halton Dimension 1')
-    plt.ylabel('Halton Dimension 2')
+    plt.scatter(halton_vectors[:, 0], halton_vectors[:, 1], alpha=0.5, edgecolor="k")
+    plt.title("Halton Sequence Points")
+    plt.xlabel("Halton Dimension 1")
+    plt.ylabel("Halton Dimension 2")
     plt.grid(True)
 
     # Plot the normal distribution
     plt.subplot(1, 2, 2)
-    plt.hist(normal_vars, bins=int(30 + np.log(num_points/100)*10), density=True, alpha=0.6, color='g')
+    plt.hist(
+        normal_vars,
+        bins=int(30 + np.log(num_points / 100) * 10),
+        density=True,
+        alpha=0.6,
+        color="g",
+    )
     mu, std = np.mean(normal_vars), np.std(normal_vars)
     xmin, xmax = plt.xlim()
     x = np.linspace(xmin, xmax, 100)
     p = (1 / (std * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / std) ** 2)
-    plt.plot(x, p, 'k', linewidth=2)
-    plt.title('Histogram of Normal Distribution')
-    plt.xlabel('Value')
-    plt.ylabel('Density')
+    plt.plot(x, p, "k", linewidth=2)
+    plt.title("Histogram of Normal Distribution")
+    plt.xlabel("Value")
+    plt.ylabel("Density")
     plt.grid(True)
 
     plt.tight_layout()
     plt.show()
+
 
 if __name__ == "__main__":
     main()
